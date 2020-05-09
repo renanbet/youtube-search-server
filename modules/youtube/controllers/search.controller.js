@@ -1,22 +1,15 @@
-var SearchModel = require('./../models/search.model.js')
-const DateService = require('./../lib/date')
+var SearchService = require('./../services/search.service.js')
 
 const get = async (id) => {
-  let schedule = await ScheduleModel.findOne(
-    { user: id })
+  let search = await SearchService.get(id)
 
-  return schedule
+  return search
 };
 
 const insert = async (search, userId) => {
-  var searchModel = new SearchModel()
-  searchModel.user = userId
-  searchModel.text = search.text
-  searchModel.date = search.date
-  searchModel.durationDays = search.durationDays
-
-  await scheduleModel.save()
-  return true
+  // search.userId = userId
+  // return await SearchService.insert(search)
+  return await SearchService.searchVideos(search)
 };
 
 module.exports = {

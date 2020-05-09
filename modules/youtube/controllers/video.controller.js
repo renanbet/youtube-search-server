@@ -1,9 +1,7 @@
-var VideoModel = require('./../models/video.model.js')
-const DateService = require('./../lib/date')
+var VideoService = require('./../services/video.service.js')
 
-const get = async (searchId) => {
-  let video = await VideoModel.findOne(
-    { search: searchId })
+const get = async (id) => {
+  let video = await VideoService.get(id)
 
   return video
 };

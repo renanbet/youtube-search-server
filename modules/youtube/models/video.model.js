@@ -3,11 +3,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var VideoSchema = new Schema({
-  search: Schema.Types.ObjectId,
+  searchId: Schema.Types.ObjectId,
   sequence: Number,
-  url: String,
-  title: String,
-  description: String,
+  id: String,
+  words: Object,
   minutes: Number
 });
 
