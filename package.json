@@ -20,6 +20,7 @@
     "moment-timezone": "^0.5.28",
     "mongoose": "^4.4.10",
     "morgan": "~1.6.1",
+    "password-hash": "^1.2.2",
     "request": "^2.81.0"
   }
 }

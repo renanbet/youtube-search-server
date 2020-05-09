@@ -18,4 +18,8 @@ Date.prototype.getDate = (value, format = 'YYYY-MM-DD HH:mm:ss') => {
   return moment(value).tz(process.env.TIMEZONE).format(format)
 }
 
+Date.prototype.weekDay = () => {
+  return moment().tz(process.env.TIMEZONE).day()
+} 
+
 module.exports = new Date()

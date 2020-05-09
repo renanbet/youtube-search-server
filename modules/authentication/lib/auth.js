@@ -1,7 +1,5 @@
 var jwt = require("jsonwebtoken")
-const bcrypt = require('bcrypt')
-const AuthRoutes = require('./auth.routes')
-const saltRounds = 10;
+const passwordHash = require('password-hash')
 const TOKEN_EXP = process.env.TOKEN_EXP
 const TOKEN_EXP_REFRESH = process.env.TOKEN_EXP_REFRESH
 const SECRET = process.env.SECRET
@@ -16,15 +14,6 @@ Auth.prototype.ensureAuthorized = (req, res, next) => {
         res.sendStatus(401)
       } else {
         const user = decoded.user
-        const path = `${req.baseUrl}${req.path}`
-        
-        let route = AuthRoutes.routes.find(item => {
-          return item.path === path
-        })
-        if (route && route.roles.length && !route.roles.includes(user.role)) {
-          res.sendStatus(401)
-          return
-        }
 
         let time = Math.floor(Date.now() / 1000)
         let exp = parseInt(decoded.exp)
@@ -54,13 +43,12 @@ Auth.prototype.createToken = (user) => {
 }
 
 Auth.prototype.createPasswordHash = (password) => {
-  const salt = bcrypt.genSaltSync(saltRounds)
-  const hash = bcrypt.hashSync(password, salt)
+  const hash = passwordHash.generate(password)
   return hash
 }
 
 Auth.prototype.passwordCompare = (password, hash) => {
-  return bcrypt.compareSync(password, hash);
+  return passwordHash.verify(password, hash);
 }
 
 module.exports = new Auth()

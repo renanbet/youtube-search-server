@@ -5,7 +5,7 @@ const Auth = require('../../authentication/lib/auth')
 
 router.post('/', Auth.ensureAuthorized, async (req, res) => {
   try {
-    let ret = await scheduleController.insert(req.body)
+    let ret = await scheduleController.insert(req.body, req.authUser.id)
     res.json({data: ret})
   } catch (error) {
     console.log(error)
@@ -15,10 +15,8 @@ router.post('/', Auth.ensureAuthorized, async (req, res) => {
 });
 
 router.get('/', Auth.ensureAuthorized, async (req, res, next) => {
-  let authUser = req.authUser
-
   try {
-    let ret = await scheduleController.get(authUser.id)
+    let ret = await scheduleController.get(req.authUser.id)
     res.json({data: ret})
   } catch (error) {
     console.log(error)

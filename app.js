@@ -31,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/auth', users);
 app.use('/schedule', schedule);
 app.use('/search', search);
 app.use('/video', video);

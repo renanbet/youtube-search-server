@@ -1,26 +1,46 @@
 const axios = require('axios')
 const textLib = require('../lib/text.lib')
 const GOOGLE_KEY = process.env.GOOGLE_KEY
-var SearchModel = require('../models/search.model.js')
-
+const SearchModel = require('../models/search.model')
+const ScheduleService = require('./schedule.service')
 const DateService = require('../lib/date')
 
-const get = async (id) => {
+const get = async (userId) => {
   return await SearchModel.findOne(
-    { user: id })
+    { user: userId })
 }
 
-const insert = async (schedule) => {
+const getAll = async (userId) => {
+  return await SearchModel.find(
+    { user: userId })
+}
+
+const insert = async (search) => {
   var searchModel = new SearchModel()
-  searchModel.user = userId
+  searchModel.user = search.user
   searchModel.text = search.text
-  searchModel.date = search.date
-  searchModel.durationDays = search.durationDays
+  searchModel.date = DateService.getToday()
+  searchModel.durationDays = 0
 
   return await searchModel.save()
 };
 
-const searchVideos = async (text) => {
+const searchVideos = async (id, text, userId) => {
+  let userSchedule = await ScheduleService.getByUser(userId)
+  
+  let schedule = []
+  schedule.push(userSchedule.sunday)
+  schedule.push(userSchedule.monday)
+  schedule.push(userSchedule.tuesday)
+  schedule.push(userSchedule.wednesday)
+  schedule.push(userSchedule.thursday)
+  schedule.push(userSchedule.friday)
+  schedule.push(userSchedule.saturday)
+
+  let weekDay = DateService.weekDay()
+  let orderSchedule = schedule.slice(weekDay).concat(schedule.slice(0, weekDay))
+  let maxTime = Math.max(...schedule)
+  
   let url = `https://www.googleapis.com`
   let totalVideos = 0
   let videosArray = []
@@ -30,7 +50,7 @@ const searchVideos = async (text) => {
       baseURL: url,
       timeout: 60000
     })
-    let videos = await client.get(`/youtube/v3/search?key=${GOOGLE_KEY}&part=id&q=${text}&type=video&maxResults=1`)
+    let videos = await client.get(`/youtube/v3/search?key=${GOOGLE_KEY}&part=id&q=${text}&type=video&maxResults=2`)
     let items = videos.data.items
 
     let urls = []
@@ -46,10 +66,8 @@ const searchVideos = async (text) => {
       const details = await client.get(url.url)
       let snnipet = details.data.items[0].snippet
       let contentDetails = details.data.items[0].contentDetails
-      let title = snnipet.title
-      let description = snnipet.description
       let duration = formatDurationInMinutes(contentDetails.duration)
-      let words = textLib.counter(`${title} ${description}`)
+      let words = textLib.counter(`${snnipet.title} ${snnipet.description}`)
 
       videosArray.push({
         sequence: idx + 1,
@@ -65,7 +83,6 @@ const searchVideos = async (text) => {
 }
 
 formatDurationInMinutes = (duration) => {
-  console.log('duration', duration)
   let seconds = 0
   let minutes = 0
   let hours = 0
@@ -85,6 +102,7 @@ formatDurationInMinutes = (duration) => {
 
 module.exports = {
   get,
+  getAll,
   insert,
   searchVideos
 }

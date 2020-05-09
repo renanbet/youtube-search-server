@@ -3,12 +3,11 @@ var router = express.Router();
 const searchController = require('../controllers/search.controller')
 const Auth = require('../../authentication/lib/auth')
 
-router.post('/', //Auth.ensureAuthorized, 
+router.post('/', Auth.ensureAuthorized, 
   async (req, res) => {
   try {
-    req.authUser = {}
-    req.authUser.id = 0
-    let ret = await searchController.insert(req.body.search, req.authUser.id)
+    let search = req.body
+    let ret = await searchController.insert(search, req.authUser.id)
     res.json({data: ret})
   } catch (error) {
     console.log(error)

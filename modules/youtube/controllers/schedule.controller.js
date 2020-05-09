@@ -5,7 +5,7 @@ const get = async (id) => {
 };
 
 const insert = async (schedule, userId) => {
-  Schedule.userId = userId
+  schedule.user = userId
   return await ScheduleService.insert(schedule)
 };
 

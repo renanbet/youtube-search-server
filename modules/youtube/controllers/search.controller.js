@@ -6,10 +6,17 @@ const get = async (id) => {
   return search
 };
 
+const getAll = async (userId) => {
+  let search = await SearchService.get(id)
+
+  return search
+};
+
 const insert = async (search, userId) => {
-  // search.userId = userId
-  // return await SearchService.insert(search)
-  return await SearchService.searchVideos(search)
+  search.user = userId
+  let searchId = await SearchService.insert(search)
+  let searchVideos = await SearchService.searchVideos(searchId, search.text, userId)
+  return searchVideos
 };
 
 module.exports = {

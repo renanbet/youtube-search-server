@@ -15,16 +15,6 @@ const get = async (id) => {
   }
 };
 
-const getAll = async () => {
-  return await User.find({},
-    {
-      username: true,
-      active: true,
-      role: true,
-      lastLogin: true
-    })
-};
-
 const insert = async (username, password) => {
   let user = await User.findOne({ username })
 
@@ -67,7 +57,6 @@ const login = async (username, password) => {
 
 module.exports = {
   get,
-  getAll,
   insert,
   login
 }

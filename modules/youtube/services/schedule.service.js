@@ -2,7 +2,12 @@ var ScheduleModel = require('./../models/schedule.model.js')
 
 const get = async (id) => {
   return await ScheduleModel.findOne(
-    { user: id })
+    { _id: id })
+}
+
+const getByUser = async (userId) => {
+  return await ScheduleModel.findOne(
+    { user: userId })
 }
 
 const insert = async (schedule) => {
@@ -21,5 +26,6 @@ const insert = async (schedule) => {
 
 module.exports = {
   get,
+  getByUser,
   insert
 }
