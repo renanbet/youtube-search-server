@@ -29,4 +29,30 @@ router.get('/', Auth.ensureAuthorized, async (req, res, next) => {
   }
 });
 
+router.get('/topwords/:searchId', Auth.ensureAuthorized, async (req, res, next) => {
+  let authUser = req.authUser
+
+  try {
+    let ret = await searchController.getTopWords(req.params.searchId)
+    res.json({data: ret})
+  } catch (error) {
+    console.log(error)
+    res.status(400)
+      .json(error);
+  }
+});
+
+router.get('/totaldays/:searchId', Auth.ensureAuthorized, async (req, res, next) => {
+  let authUser = req.authUser
+
+  try {
+    let ret = await searchController.getTotalDays(req.params.searchId)
+    res.json({data: ret})
+  } catch (error) {
+    console.log(error)
+    res.status(400)
+      .json(error);
+  }
+});
+
 module.exports = router;

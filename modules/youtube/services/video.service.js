@@ -9,7 +9,7 @@ const get = async (id) => {
 
 const insert = async (video) => {
   var videoModel = new VideoModel()
-  videoModel.search = video.searchId
+  videoModel.search = video.search
   videoModel.sequence = video.sequence
   videoModel.id = video.id
   videoModel.words = video.words
@@ -18,7 +18,35 @@ const insert = async (video) => {
   return await videoModel.save()
 };
 
+const getTopWords = async (searchId, top) => {
+  let videos = await VideoModel.find(
+    { search: searchId }
+  )
+  allWords = {}
+  for (let i = 0; i < videos.length; i++) {
+    let words = videos[i].words
+    Object.keys(words).forEach(item => {
+      allWords[item] = allWords[item] ? parseInt(allWords[item]) + parseInt(words[item]) : parseInt(words[item])
+    })
+  }
+  let order = Object.entries(allWords).sort((a, b) => {
+    if (a[1] > b[1])
+      return -1
+    if (a[1] < b[1])
+      return 1
+    return 0
+  })
+  return order.slice(0, 5)
+}
+
+const getBySearchId = async (searchId) => {
+  return await VideoModel.find(
+    { search: searchId }).sort({sequence: 1})
+}
+
 module.exports = {
   get,
-  insert
+  insert,
+  getTopWords,
+  getBySearchId
 }

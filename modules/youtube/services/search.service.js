@@ -1,9 +1,9 @@
-const axios = require('axios')
 const textLib = require('../lib/text.lib')
-const GOOGLE_KEY = process.env.GOOGLE_KEY
 const SearchModel = require('../models/search.model')
 const ScheduleService = require('./schedule.service')
 const DateService = require('../lib/date')
+const YouTubeService = require('./youtube.service')
+const VideoService = require('./video.service')
 
 const get = async (userId) => {
   return await SearchModel.findOne(
@@ -20,14 +20,14 @@ const insert = async (search) => {
   searchModel.user = search.user
   searchModel.text = search.text
   searchModel.date = DateService.getToday()
-  searchModel.durationDays = 0
+  searchModel.daysLong = 0
 
   return await searchModel.save()
 };
 
-const searchVideos = async (id, text, userId) => {
-  const maxVideos = 40
-  let totalResults = 0
+const searchVideos = async (searchId, text, userId) => {
+  const maxVideos = 200
+  let totalResults = 200
   let countIncludedVideos = 0
   let countAllVideos = 0
 
@@ -41,125 +41,126 @@ const searchVideos = async (id, text, userId) => {
   schedule.push(userSchedule.thursday)
   schedule.push(userSchedule.friday)
   schedule.push(userSchedule.saturday)
-
+  
   let weekDay = DateService.weekDay()
   let orderSchedule = schedule.slice(weekDay).concat(schedule.slice(0, weekDay))
   let maxTime = Math.max(...schedule)
   let durationSequence = []
-
-  let videosArray = []
+  
   let nextPageToken = ''
   try {
+    while ((countAllVideos < maxVideos && countAllVideos < totalResults)) {
+      console.log(countAllVideos)
+      let videos = await YouTubeService.getVideos(text, 20, nextPageToken)
+      nextPageToken = videos.nexPageToken
+      totalResults = videos.totalResults
+      let urls = videos.urls
+      for (const [idx, url] of urls.entries()) {
+        const details = await YouTubeService.getDetails(url.url)
+        let words = details.title ? textLib.counter(`${details.title} ${details.description}`) : {}
+        if (!details.duration || details.duration > maxTime || !Object.values(words).length) {
+          countAllVideos++
+          continue
+        }
+        durationSequence.push(details.duration)
 
-    let videos = await getVideos(text, 20, nextPageToken)
-    nextPageToken = videos.nexPageToken
-    totalResults = videos.totalResults
-    let urls = videos.urls
+        let video = {
+          search: searchId,
+          sequence: countIncludedVideos + 1,
+          id: url.id,
+          minutes: details.duration,
+          words
+        }
 
-    for (const [idx, url] of urls.entries()) {
-      const details = await getDetails(url.url)
-      let words = details.title ? textLib.counter(`${details.title} ${details.description}`) : {}
-      if (!details.duration || details.duration > maxTime || !Object.values(words).length) {
-        console.log('duration', details.duration)
-        console.log('words', Object.values(words).length)
-        console.log('Video descartado')
-        console.log('-----------------')
+        await VideoService.insert(video)
+
+        countIncludedVideos++
         countAllVideos++
-        continue
-      }
-      durationSequence.push(details.duration)
-      videosArray.push({
-        sequence: countIncludedVideos + 1,
-        id: url.id,
-        minutes: details.duration,
-        words
-      })
-
-      countIncludedVideos++
-      countAllVideos++
-      if(countIncludedVideos === maxVideos || 
+        if (countAllVideos === maxVideos ||
           countAllVideos === totalResults) {
-            break;
-          }
+          break;
+        }
+      }
     }
-    console.log(orderSchedule)
-    console.log(durationSequence)
-    return videosArray
+
+    let totalDays = calcTime(orderSchedule, durationSequence)
+    let top5Words = await getTopWords(searchId)
+    
+    await SearchModel.findOneAndUpdate({ _id: searchId }, { daysLong: totalDays, words: top5Words })
+
+    return {
+      totalDays,
+      top5Words
+    }
   } catch (e) {
     console.log(e)
   }
 }
 
-getDetails = async (url) => {
-  let client = axios.create({
-    baseURL: 'https://www.googleapis.com',
-    timeout: 60000
+const getTotalDays = async (searchId) => {
+  let search = await SearchModel.findOne({
+    _id: searchId
   })
-  let res = await client.get(url)
-  let title = res.data.items[0].snippet ? res.data.items[0].snippet.title : ''
-  let description = res.data.items[0].snippet ? res.data.items[0].snippet.description : ''
-  let duration = res.data.items[0].contentDetails ? formatDurationInMinutes(res.data.items[0].contentDetails.duration) : 0
-  return {
-    duration,
-    title,
-    description
-  }
-}
+  let total = search.daysLong
+  if (!total) {
+    let userSchedule = await ScheduleService.getByUser(search.user)
 
-getVideos = async (text, total, pageToken = '') => {
-  let client = axios.create({
-    baseURL: 'https://www.googleapis.com',
-    timeout: 60000
-  })
-  pageToken = pageToken ? `&pageToken=${pageToken}` : ''
-  let url = `https://www.googleapis.com/youtube/v3/search?key=${GOOGLE_KEY}&part=id&q=${text}&type=video&maxResults=${total}${pageToken}`
-  let videos = await client.get(url)
-
-  let items = videos.data.items
-  let urls = []
-  items.forEach(item => {
-    let id = item.id.videoId
-    urls.push({
-      id,
-      url: `https://www.googleapis.com/youtube/v3/videos?key=${GOOGLE_KEY}&part=contentDetails&part=snippet&id=${id}`
-    })
-  })
-  let nexPageToken = videos.data.nextPageToken
-  let totalResults = videos.data.pageInfo.totalResults
-
-  return {
-    totalResults,
-    nexPageToken,
-    urls
+    let schedule = []
+    schedule.push(userSchedule.sunday)
+    schedule.push(userSchedule.monday)
+    schedule.push(userSchedule.tuesday)
+    schedule.push(userSchedule.wednesday)
+    schedule.push(userSchedule.thursday)
+    schedule.push(userSchedule.friday)
+    schedule.push(userSchedule.saturday)
+    
+    let weekDay = DateService.weekDay()
+    let orderSchedule = schedule.slice(weekDay).concat(schedule.slice(0, weekDay))
+    let durationSequence = []
+    
+    let videos = await VideoService.getBySearchId(searchId)
+    for(let i = 0; i < videos.length; i++) {
+      durationSequence.push(videos[i].minutes)
+    }
+    let totalDays = calcTime(orderSchedule, durationSequence)
+    total = totalDays
+    search.daysLong = total
+    await search.save()
   }
-}
-
-formatDurationInMinutes = (duration) => {
-  let seconds = 0
-  let minutes = 0
-  let hours = 0
-  duration = duration.substring(2)
-  if (duration.includes('H')) {
-    hours = duration.substring(0, duration.indexOf('H'))
-    duration = duration.substring(duration.indexOf('H') + 1)
-  }
-  if (duration.includes('M')) {
-    minutes = duration.substring(0, duration.indexOf('M'))
-    duration = duration.substring(duration.indexOf('M') + 1)
-  }
-  if (duration.includes('S')) {
-    seconds = duration.substring(0, duration.indexOf('S'))
-    duration = duration.substring(duration.indexOf('S') + 1)
-  }
-  minutes = parseInt(seconds) === 0 ? parseInt(minutes) : parseInt(minutes) + 1
-  let total = (parseInt(hours) * 60) + minutes
-
   return total
+}
+
+const calcTime = (schedule, videos) => {
+  let scheduleCopy = []
+  scheduleCopy.push(...schedule)
+  let currentDay = 0
+  let countDays = 0
+
+  for (let i = 0; i < videos.length; i++) {
+    let time = videos[i]
+    let dayTime = schedule[currentDay]
+
+    while (time > dayTime) {
+      schedule[currentDay] = scheduleCopy[currentDay]
+      currentDay = currentDay === 6 ? 0 : currentDay + 1
+      countDays++
+      dayTime = schedule[currentDay]
+    }
+
+    schedule[currentDay] = schedule[currentDay] - time
+  }
+  return countDays + 1
+}
+
+const getTopWords = async (searchId) => {
+  return await VideoService.getTopWords(searchId, 5)
 }
 
 module.exports = {
   get,
   getAll,
   insert,
-  searchVideos
+  searchVideos,
+  getTopWords,
+  getTotalDays
 }

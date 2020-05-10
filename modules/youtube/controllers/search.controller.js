@@ -19,7 +19,19 @@ const insert = async (search, userId) => {
   return searchVideos
 };
 
+const getTopWords = async (searchId) => {
+  let topWords = await SearchService.getTopWords(searchId)
+
+  return topWords
+}
+
+const getTotalDays = async (searchId) => {
+  return await SearchService.getTotalDays(searchId)
+}
+
 module.exports = {
   get,
-  insert
+  insert,
+  getTopWords,
+  getTotalDays
 }
