@@ -9,9 +9,8 @@ var schedule = require('./modules/youtube/routes/schedule');
 var search = require('./modules/youtube/routes/search');
 var video = require('./modules/youtube/routes/video');
 
-var mongoose = require('mongoose');
-let url = process.env.MONGO_URL || 'localhost:27017/youtube'
-mongoose.connect(url);
+var db = require('./config/db');
+db()
 
 var app = express();
 
