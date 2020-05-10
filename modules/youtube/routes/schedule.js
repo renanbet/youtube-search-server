@@ -16,7 +16,7 @@ router.post('/', Auth.ensureAuthorized, async (req, res) => {
 
 router.get('/', Auth.ensureAuthorized, async (req, res, next) => {
   try {
-    let ret = await scheduleController.get(req.authUser.id)
+    let ret = await scheduleController.getByUser(req.authUser.id)
     res.json({data: ret})
   } catch (error) {
     console.log(error)

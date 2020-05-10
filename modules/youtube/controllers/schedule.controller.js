@@ -1,7 +1,7 @@
 const ScheduleService = require('./../services/schedule.service')
 
-const get = async (id) => {
-  return await scheduleService.get(id)
+const getByUser = async (userId) => {
+  return await ScheduleService.getByUser(userId)
 };
 
 const insert = async (schedule, userId) => {
@@ -10,6 +10,6 @@ const insert = async (schedule, userId) => {
 };
 
 module.exports = {
-  get,
+  getByUser,
   insert
 }

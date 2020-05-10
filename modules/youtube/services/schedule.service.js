@@ -8,7 +8,7 @@ const get = async (id) => {
 
 const getByUser = async (userId) => {
   return await ScheduleModel.findOne(
-    { user: userId })
+    { user: userId }, {}, { sort: { 'date': -1} })
 }
 
 const insert = async (schedule) => {
