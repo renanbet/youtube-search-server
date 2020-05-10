@@ -11,7 +11,15 @@ const getDetails = async (url) => {
   let description = res.data.items[0].snippet && res.data.items[0].snippet.description ? res.data.items[0].snippet.description : ''
   let duration = res.data.items[0].contentDetails ? formatDurationInMinutes(res.data.items[0].contentDetails.duration) : 0
   if (!duration || !title || !description) {
-    console.log('not content details or snippet')
+    if (!duration) {
+      console.log('not duration')
+    }
+    if (!title) {
+      console.log('not title')
+    }
+    if (!description) {
+      console.log('not description')
+    }
     console.log(url)
   }
   return {
@@ -36,7 +44,7 @@ const getVideos = async (text, total, pageToken = '') => {
     let id = item.id.videoId
     urls.push({
       id,
-      url: `https://www.googleapis.com/youtube/v3/videos?key=${GOOGLE_KEY}&part=contentDetails&part=snippet&id=${id}`
+      url: `https://www.googleapis.com/youtube/v3/videos?key=${GOOGLE_KEY}&part=contentDetails,snippet&id=${id}`
     })
   })
   let nexPageToken = videos.data.nextPageToken

@@ -50,20 +50,21 @@ const searchVideos = async (searchId, text, userId) => {
   let nextPageToken = ''
   try {
     while ((countAllVideos < maxVideos && countAllVideos < totalResults)) {
-      console.log(countAllVideos)
+      console.log('Total visitados', countAllVideos)
+      console.log('Total registrado', countIncludedVideos)
       let videos = await YouTubeService.getVideos(text, 20, nextPageToken)
       nextPageToken = videos.nexPageToken
       totalResults = videos.totalResults
       let urls = videos.urls
       for (const [idx, url] of urls.entries()) {
         const details = await YouTubeService.getDetails(url.url)
-        let words = details.title ? textLib.counter(`${details.title} ${details.description}`) : {}
-        if (!details.duration || details.duration > maxTime || !Object.values(words).length) {
+        if (!details.duration || details.duration > maxTime || !(details.title || details.description)) {
           countAllVideos++
           continue
         }
         durationSequence.push(details.duration)
 
+        let words = textLib.counter(`${details.title} ${details.description}`)
         let video = {
           search: searchId,
           sequence: countIncludedVideos + 1,
