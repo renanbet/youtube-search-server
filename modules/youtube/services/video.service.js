@@ -1,6 +1,5 @@
 var VideoModel = require('./../models/video.model.js')
-
-const DateService = require('./../lib/date')
+const removeWords = require('../data/removed-words.json')
 
 const get = async (id) => {
   return await VideoModel.findOne(
@@ -25,7 +24,9 @@ const getTopWords = async (searchId, top) => {
   allWords = {}
   for (let i = 0; i < videos.length; i++) {
     let words = videos[i].words
-    Object.keys(words).forEach(item => {
+    Object.keys(words).filter(item => {
+      return !removeWords.includes(item)
+    }).forEach(item => {
       allWords[item] = allWords[item] ? parseInt(allWords[item]) + parseInt(words[item]) : parseInt(words[item])
     })
   }
@@ -36,7 +37,7 @@ const getTopWords = async (searchId, top) => {
       return 1
     return 0
   })
-  return order.slice(0, 5)
+  return order.slice(0, top)
 }
 
 const getBySearchId = async (searchId) => {
