@@ -16,7 +16,7 @@ const getAll = async (userId) => {
 }
 
 const insert = async (search) => {
-  var searchModel = new SearchModel()
+  let searchModel = new SearchModel()
   searchModel.user = search.user
   searchModel.text = search.text
   searchModel.date = DateService.getToday()

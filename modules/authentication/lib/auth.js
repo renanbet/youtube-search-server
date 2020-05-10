@@ -1,4 +1,4 @@
-var jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken")
 const passwordHash = require('password-hash')
 const TOKEN_EXP = process.env.TOKEN_EXP
 const TOKEN_EXP_REFRESH = process.env.TOKEN_EXP_REFRESH
@@ -18,7 +18,7 @@ Auth.prototype.ensureAuthorized = (req, res, next) => {
         let time = Math.floor(Date.now() / 1000)
         let exp = parseInt(decoded.exp)
         if (exp - time < parseInt(TOKEN_EXP_REFRESH)) {
-          var obj = {
+          const obj = {
             user: decoded.user,
             exp: Math.floor(Date.now() / 1000) + parseInt(TOKEN_EXP)
           };
@@ -35,7 +35,7 @@ Auth.prototype.ensureAuthorized = (req, res, next) => {
 }
 
 Auth.prototype.createToken = (user) => {
-	var obj = {
+	const obj = {
     user,
     exp: Math.floor(Date.now() / 1000) + parseInt(TOKEN_EXP)
   };

@@ -1,4 +1,4 @@
-var User = require('./../models/user.js');
+const User = require('./../models/user.js');
 const Roles = require('./../enums/roles')
 const DateService = require('./../lib/date')
 const Auth = require('./../lib/auth')
@@ -23,7 +23,7 @@ const insert = async (username, password) => {
       error: "User already exists!"
     }
   }
-  var userModel = new User()
+  let userModel = new User()
   userModel.username = username
   userModel.password = Auth.createPasswordHash(password)
   userModel.role = Roles.user

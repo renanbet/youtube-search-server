@@ -1,4 +1,4 @@
-var SearchService = require('./../services/search.service.js')
+const SearchService = require('./../services/search.service.js')
 
 const get = async (id) => {
   let search = await SearchService.get(id)

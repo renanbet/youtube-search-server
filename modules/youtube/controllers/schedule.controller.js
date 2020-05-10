@@ -1,4 +1,4 @@
-var ScheduleService = require('./../services/schedule.service')
+const ScheduleService = require('./../services/schedule.service')
 
 const get = async (id) => {
   return await scheduleService.get(id)

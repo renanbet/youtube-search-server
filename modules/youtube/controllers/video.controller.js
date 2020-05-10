@@ -1,4 +1,4 @@
-var VideoService = require('./../services/video.service.js')
+const VideoService = require('./../services/video.service.js')
 
 const get = async (id) => {
   let video = await VideoService.get(id)

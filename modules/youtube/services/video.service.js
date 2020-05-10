@@ -1,4 +1,4 @@
-var VideoModel = require('./../models/video.model.js')
+const VideoModel = require('./../models/video.model.js')
 const removeWords = require('../data/removed-words.json')
 
 const get = async (id) => {
@@ -7,7 +7,7 @@ const get = async (id) => {
 }
 
 const insert = async (video) => {
-  var videoModel = new VideoModel()
+  let videoModel = new VideoModel()
   videoModel.search = video.search
   videoModel.sequence = video.sequence
   videoModel.id = video.id

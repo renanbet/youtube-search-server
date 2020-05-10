@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const scheduleController = require('../controllers/schedule.controller')
 const Auth = require('../../authentication/lib/auth')
 

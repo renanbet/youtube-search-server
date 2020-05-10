@@ -1,4 +1,5 @@
-var ScheduleModel = require('./../models/schedule.model.js')
+const ScheduleModel = require('./../models/schedule.model.js')
+const DateServicie = require('./../lib/date')
 
 const get = async (id) => {
   return await ScheduleModel.findOne(
@@ -11,7 +12,7 @@ const getByUser = async (userId) => {
 }
 
 const insert = async (schedule) => {
-  var scheduleModel = new ScheduleModel()
+  let scheduleModel = new ScheduleModel()
   scheduleModel.user = schedule.user
   scheduleModel.sunday = schedule.sunday
   scheduleModel.monday = schedule.monday
@@ -20,6 +21,7 @@ const insert = async (schedule) => {
   scheduleModel.thursday = schedule.thursday
   scheduleModel.friday = schedule.friday
   scheduleModel.saturday = schedule.saturday
+  scheduleModel.date = DateServicie.getToday()
   
   return await scheduleModel.save()
 };

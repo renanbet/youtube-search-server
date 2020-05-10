@@ -1,8 +1,8 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var Schema = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-var ScheduleSchema = new Schema({
+const ScheduleSchema = new Schema({
   user: Schema.Types.ObjectId,
   sunday: Number,
   monday: Number,
@@ -10,7 +10,8 @@ var ScheduleSchema = new Schema({
   wednesday: Number,
   thursday: Number,
   friday: Number,
-  saturday: Number
+  saturday: Number,
+  date: Date
 });
 
 module.exports = mongoose.model('Schedule', ScheduleSchema);
