@@ -2,7 +2,7 @@ const controller = require('../modules/youtube/controllers/schedule.controller')
 const expect = require('chai').expect;
 let time = (new Date()).getTime()
 let schedule = {
-    user: time,
+    user: '5eb84d57d051e96feeb51472',
     sunday: 10,
     monday: 10,
     tuesday: 10,
