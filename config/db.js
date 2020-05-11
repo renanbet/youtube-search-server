@@ -29,7 +29,7 @@ module.exports = async (mongoUrl) => {
   if (mongoUrl) {
     url = mongoUrl
   }
-
+  console.log(url)
   try {
     mongooseRegisterEvents(mongoose)
     await mongoose.connect(url, options)
