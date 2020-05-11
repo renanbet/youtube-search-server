@@ -5,9 +5,9 @@ const DateService = require('../lib/date')
 const YouTubeService = require('./youtube.service')
 const VideoService = require('./video.service')
 
-const get = async (userId) => {
+const get = async (searchId) => {
   return await SearchModel.findOne(
-    { user: userId })
+    { _id: searchId })
 }
 
 const getByUser = async (userId) => {
