@@ -6,18 +6,22 @@ const get = async (id) => {
   return search
 };
 
-const getAll = async (userId) => {
-  let search = await SearchService.get(id)
+const getByUser = async (userId) => {
+  let searches = await SearchService.getByUser(userId)
 
-  return search
+  return searches
 };
 
 const insert = async (search, userId) => {
   search.user = userId
-  let searchId = await SearchService.insert(search)
-  let searchVideos = await SearchService.searchVideos(searchId, search.text, userId)
-  return searchVideos
+  let newSearch = await SearchService.insert(search)
+  return newSearch
 };
+
+const searchVideos = async (searchId, text, userId) => {
+  let searchVideos = await SearchService.searchVideos(searchId, text, userId)
+  return searchVideos
+}
 
 const getTopWords = async (searchId) => {
   let topWords = await SearchService.getTopWords(searchId)
@@ -31,7 +35,9 @@ const getTotalDays = async (searchId) => {
 
 module.exports = {
   get,
+  getByUser,
   insert,
   getTopWords,
-  getTotalDays
+  getTotalDays,
+  searchVideos
 }

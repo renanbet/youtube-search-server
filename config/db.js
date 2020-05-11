@@ -12,7 +12,10 @@ const {
   MONGO_PROTOCOL
 } = process.env
 
-let url = `${MONGO_PROTOCOL}://${MONGO_USER}:${encodeURIComponent(MONGO_PWD)}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}`
+let user = MONGO_USER ? `${MONGO_USER}:${encodeURIComponent(MONGO_PWD)}@` : ''
+let port = MONGO_PORT ? `:${MONGO_PORT}` : ''
+
+let url = `${MONGO_PROTOCOL}://${user}${MONGO_HOST}${port}/${MONGO_DB}`
 
 const options = {
   useNewUrlParser: true,

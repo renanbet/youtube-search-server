@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken")
 const passwordHash = require('password-hash')
-const TOKEN_EXP = process.env.TOKEN_EXP
-const TOKEN_EXP_REFRESH = process.env.TOKEN_EXP_REFRESH
-const SECRET = process.env.SECRET
+const TOKEN_EXP = process.env.TOKEN_EXP || 3600000
+const TOKEN_EXP_REFRESH = process.env.TOKEN_EXP_REFRESH || 120
+const SECRET = process.env.SECRET || 'mysecret'
 
 function Auth() {}
 

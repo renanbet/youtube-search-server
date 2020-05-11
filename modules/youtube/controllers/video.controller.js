@@ -1,11 +1,11 @@
 const VideoService = require('./../services/video.service.js')
 
-const get = async (id) => {
-  let video = await VideoService.get(id)
+const getBySearchId = async (searchId) => {
+  let videos = await VideoService.getBySearchId(searchId)
 
-  return video
+  return videos
 };
 
 module.exports = {
-  get
+  getBySearchId
 }

@@ -10,7 +10,7 @@ const get = async (userId) => {
     { user: userId })
 }
 
-const getAll = async (userId) => {
+const getByUser = async (userId) => {
   return await SearchModel.find(
     { user: userId })
 }
@@ -21,6 +21,7 @@ const insert = async (search) => {
   searchModel.text = search.text
   searchModel.date = DateService.getToday()
   searchModel.daysLong = 0
+  searchModel.words = []
 
   return await searchModel.save()
 };
@@ -70,7 +71,8 @@ const searchVideos = async (searchId, text, userId) => {
           sequence: countIncludedVideos + 1,
           id: url.id,
           minutes: details.duration,
-          words
+          words,
+          title: details.title
         }
 
         await VideoService.insert(video)
@@ -159,7 +161,7 @@ const getTopWords = async (searchId) => {
 
 module.exports = {
   get,
-  getAll,
+  getByUser,
   insert,
   searchVideos,
   getTopWords,

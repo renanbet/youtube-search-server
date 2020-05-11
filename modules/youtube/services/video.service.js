@@ -13,6 +13,7 @@ const insert = async (video) => {
   videoModel.id = video.id
   videoModel.words = video.words
   videoModel.minutes = video.minutes
+  videoModel.title = video.title
 
   return await videoModel.save()
 };
@@ -42,7 +43,12 @@ const getTopWords = async (searchId, top) => {
 
 const getBySearchId = async (searchId) => {
   return await VideoModel.find(
-    { search: searchId }).sort({sequence: 1})
+    { search: searchId }, {
+      sequence: 1,
+      id: 1,
+      minutes: 1,
+      title: 1
+    }).sort({sequence: 1})
 }
 
 module.exports = {

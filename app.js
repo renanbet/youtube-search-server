@@ -10,7 +10,8 @@ var search = require('./modules/youtube/routes/search');
 var video = require('./modules/youtube/routes/video');
 
 var db = require('./config/db');
-db()
+let mongoUrl = process.env.MONGO_URL || ''
+db(mongoUrl)
 
 var app = express();
 

@@ -8,7 +8,8 @@ router.post('/', Auth.ensureAuthorized,
   try {
     let search = req.body
     let ret = await searchController.insert(search, req.authUser.id)
-    res.json({data: ret})
+    res.json(ret)
+    await searchController.searchVideos(ret._id, ret.text, req.authUser.id)
   } catch (error) {
     console.log(error)
     res.status(400)
@@ -20,8 +21,19 @@ router.get('/', Auth.ensureAuthorized, async (req, res, next) => {
   let authUser = req.authUser
 
   try {
-    let ret = await searchController.get(authUser.id)
-    res.json({data: ret})
+    let ret = await searchController.getByUser(authUser.id)
+    res.json(ret)
+  } catch (error) {
+    console.log(error)
+    res.status(400)
+      .json(error);
+  }
+});
+
+router.get('/:id', Auth.ensureAuthorized, async (req, res, next) => {
+  try {
+    let ret = await searchController.get(req.params.id)
+    res.json(ret)
   } catch (error) {
     console.log(error)
     res.status(400)
@@ -47,7 +59,7 @@ router.get('/totaldays/:searchId', Auth.ensureAuthorized, async (req, res, next)
 
   try {
     let ret = await searchController.getTotalDays(req.params.searchId)
-    res.json({data: ret})
+    res.json(ret)
   } catch (error) {
     console.log(error)
     res.status(400)

@@ -7,7 +7,8 @@ const VideoSchema = new Schema({
   sequence: Number,
   id: String,
   words: Object,
-  minutes: Number
+  minutes: Number,
+  title: String
 });
 
 module.exports = mongoose.model('Video', VideoSchema);

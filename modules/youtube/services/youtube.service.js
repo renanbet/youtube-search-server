@@ -12,13 +12,13 @@ const getDetails = async (url) => {
   let duration = res.data.items[0].contentDetails ? formatDurationInMinutes(res.data.items[0].contentDetails.duration) : 0
   if (!duration || !title || !description) {
     if (!duration) {
-      console.log('not duration')
+      console.log('no duration')
     }
     if (!title) {
-      console.log('not title')
+      console.log('no title')
     }
     if (!description) {
-      console.log('not description')
+      console.log('no description')
     }
     console.log(url)
   }

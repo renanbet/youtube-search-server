@@ -52,7 +52,11 @@ const login = async (username, password) => {
     id: user._id,
     role: user.role
   }
-  return Auth.createToken(userToken)
+  let token = Auth.createToken(userToken)
+  return {
+    token,
+    role: user.role
+  }
 };
 
 module.exports = {
