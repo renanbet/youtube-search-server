@@ -11,3 +11,4 @@ https://github.com/renanbet/youtube-search-compose
 - Testes unitários com Mocha e Chai
 - Api token com JWT
 - Integração com a api do YouTube
+- Json de palavras desconsideradas em modules/youtube/data/removed-words.json
