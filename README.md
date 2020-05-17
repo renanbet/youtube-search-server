@@ -1,14 +1,14 @@
-# youtube-search-server
+# Youtube search server
 
-## Instruções em
+## More instructions
 
 https://github.com/renanbet/youtube-search-compose
 
 
-## O app
+## The app
 
-- Desenvolvido em Nodejs e Express
-- Testes unitários com Mocha e Chai
-- Api token com JWT
-- Integração com a api do YouTube
-- Json de palavras desconsideradas em modules/youtube/data/removed-words.json
+- Nodejs and Express development
+- Unit tests with Mocha and Chai
+- JWT api token
+- Integration with YouTube Api
+- Rejected words at modules/youtube/data/removed-words.json
