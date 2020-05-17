@@ -7,7 +7,7 @@ https://github.com/renanbet/youtube-search-compose
 
 ## The app
 
-- Nodejs and Express development
+- Use Nodejs and Express to development
 - Unit tests with Mocha and Chai
 - JWT api token
 - Integration with YouTube Api
