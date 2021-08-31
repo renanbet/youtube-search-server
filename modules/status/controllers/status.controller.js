@@ -1,5 +1,5 @@
 const utils = require('../lib/utils')
-const CounterModel = require('../../config/counters.model')
+const CounterModel = require('../../../config/counters.model')
 
 const getStatus = async () => {
   var time = process.uptime()
